@@ -4,51 +4,6 @@ import { useEffect, useState } from "react"
 import Header from "../component/Header";
 import { useNavigate } from "react-router-dom";
 
-
-const res = {
-    "_id": "64d51ca799f6a25fa1c7edfc",
-    "Id": "53edd01e",
-    "ResponseId": "966ea389",
-    "Answers": [
-        {
-            "type": "question",
-            "question": "How are you?",
-            "questionNumber": 1,
-            "responseAnswer": "geddds"
-        },
-        {
-            "type": "mcq",
-            "question": "How was your day?",
-            "questionNumber": 2,
-            "optionList": {
-                "a": {
-                    "title": "Good",
-                    "correct": false
-                },
-                "b": {
-                    "title": "Fine",
-                    "correct": false
-                },
-                "c": {
-                    "title": "Doesn't matter",
-                    "correct": true
-                },
-                "d": {
-                    "title": "nnnn",
-                    "correct": false
-                }
-            },
-            "responseOption": {
-                "a": false,
-                "b": false,
-                "c": true,
-                "d": false
-            }
-        }
-    ],
-    "__v": 0
-}
-
 const Container = styled(Box)({
     display: 'flex',
     justifyContent: 'center'

@@ -17,7 +17,12 @@ const CustomButton = styled(Button)({
 
 const DialogStyle = {
   height: '25%',
-  width: '35%',
+  width: {
+    lg: '35%',
+    md: '38%',
+    sm: '80%',
+    xs: '80%'
+  },
   maxWidth: '100%',
   maxHeight: '100%',
   boxShadow: 'none',

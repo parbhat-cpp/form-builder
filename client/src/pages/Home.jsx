@@ -22,7 +22,7 @@ const Wrapper = styled(Box)({
   flexDirection: 'column',
   justifyContent: 'center',
   alignItems: 'center',
-  overflowY: 'hidden'
+  overflowY: 'hidden',
 });
 
 const IconBtn = styled(IconButton)({
@@ -45,9 +45,12 @@ const IconBtn = styled(IconButton)({
 
 const DialogStyle = {
   height: '35%',
-  width: '35%',
-  maxWidth: '100%',
-  maxHeight: '100%',
+  width: {
+    lg: '35%',
+    md: '38%',
+    sm: '80%',
+    xs: '80%'
+  },
   boxShadow: 'none',
   borderRadius: '10px 10px 10px 10px',
 }
@@ -76,6 +79,17 @@ const ResponseText = styled(Typography)({
     cursor: 'pointer'
   }
 })
+
+const BreakPoints = {
+  '& > button': {
+    width: {
+      xs: '35%',
+      md: '17%',
+      sm: '35%',
+      lg: '17%'
+    }
+  }
+}
 
 function Home() {
 
@@ -135,7 +149,7 @@ function Home() {
   return (
     <Container>
       <Header />
-      <Wrapper>
+      <Wrapper sx={BreakPoints}>
         <IconBtn onClick={() => createForm()}>
           <AddIcon />
         </IconBtn>
@@ -185,7 +199,7 @@ function Home() {
               <CloseIcon onClick={() => setResDialog(false)} />
             </IconButton>
           </Box>
-          <TextField id="outlined-basic" label="Enter Form Response ID" variant="outlined" style={{ margin: 10 }} />
+          <TextField id="outlined-basic" label="Enter Form Response ID" variant="outlined" style={{ margin: 10 }} required/>
           <CustomButton onClick={() => redirectToResponseAnalysisPage()} style={{ marginBottom: 15 }}>
             Open
           </CustomButton>

@@ -53,16 +53,24 @@ const QuestionsContainer = styled(Box)({
 
 const DialogStyle = {
     height: '35%',
-    width: '35%',
-    maxWidth: '100%',
-    maxHeight: '100%',
+    width: {
+        lg: '35%',
+        md: '38%',
+        sm: '80%',
+        xs: '80%'
+    },
     boxShadow: 'none',
     borderRadius: '10px 10px 10px 10px',
 }
 
 const LinkDialog = {
     height: '25%',
-    width: '35%',
+    width: {
+        lg: '35%',
+        md: '38%',
+        sm: '80%',
+        xs: '80%'
+    },
     maxWidth: '100%',
     maxHeight: '100%',
     boxShadow: 'none',
