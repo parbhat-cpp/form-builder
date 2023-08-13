@@ -155,7 +155,7 @@ function Home() {
               <CloseIcon onClick={() => setOpen(false)} />
             </IconButton>
           </Box>
-          <TextField id="input-id" label="Enter Form Response ID" variant="outlined" required style={{ margin: 10 }} />
+          <TextField id="input-id" label="Enter Form Form ID" variant="outlined" required style={{ margin: 10 }} />
           <CustomButton style={{ marginBottom: 15 }} onClick={(e) => accessForm(e)}>
             Open
           </CustomButton>
