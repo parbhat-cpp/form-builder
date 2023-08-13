@@ -111,7 +111,7 @@ function CreateForm() {
             setID(uid_reduced);
             // setQuestions([{ FormId: uid_reduced, FormTitle: a1, FormDescription: a2 }, ...questions]);
             console.log(questions);
-            await axios.post(`http://localhost:5000/save-form`, JSON.stringify({ Id: uid_reduced, info: questions, FormDetails: { FormTitle: a1, FormDescription: a2 } }), { headers: { 'Content-Type': 'application/json' } });
+            await axios.post(`https://ps-forms.onrender.com/save-form`, JSON.stringify({ Id: uid_reduced, info: questions, FormDetails: { FormTitle: a1, FormDescription: a2 } }), { headers: { 'Content-Type': 'application/json' } });
             setOpenLink(true);
             // navigate('/');
         } else {

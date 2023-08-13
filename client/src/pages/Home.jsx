@@ -92,8 +92,8 @@ function Home() {
 
   const accessForm = () => {
     const id = document.getElementById('input-id').value;
-    // axios.get(`http://localhost:5000/access-form/${id}`).then(res => res.data()).then(data => console.log(data)).catch(err => console.log(err))
-    fetch(`http://localhost:5000/access-form/${id}`).then(res => res.json()).then(data => {
+    // axios.get(`https://ps-forms.onrender.com/access-form/${id}`).then(res => res.data()).then(data => console.log(data)).catch(err => console.log(err))
+    fetch(`https://ps-forms.onrender.com/access-form/${id}`).then(res => res.json()).then(data => {
       if (data === null) {
         setOpen(false);
         setErrorDialog(true);
@@ -119,7 +119,7 @@ function Home() {
 
   const redirectToResponseAnalysisPage = () => {
     const resId = document.getElementById("outlined-basic").value;
-    fetch(`http://localhost:5000/response/${resId}`)
+    fetch(`https://ps-forms.onrender.com/response/${resId}`)
       .then(res => res.json())
       .then(data => {
         if (data === null) {

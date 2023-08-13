@@ -58,13 +58,13 @@ function AccessForm() {
     const uid = uuid();
     const uid_reduced = uid.slice(0, 8);
     setID(uid_reduced);
-    await axios.post(`http://localhost:5000/save-response`, JSON.stringify({ Id: responseJson.Id, ResponseId: uid_reduced, Answers: responseJson.Answers }), { headers: { 'Content-Type': 'application/json' } });
+    await axios.post(`https://ps-forms.onrender.com/save-response`, JSON.stringify({ Id: responseJson.Id, ResponseId: uid_reduced, Answers: responseJson.Answers }), { headers: { 'Content-Type': 'application/json' } });
     setOpen(true);
   }
 
   useEffect(() => {
     try {
-      fetch(`http://localhost:5000/access-form/${localStorage.currentId}`).then(res => res.json()).then(data => {
+      fetch(`https://ps-forms.onrender.com/access-form/${localStorage.currentId}`).then(res => res.json()).then(data => {
         if (data === null) {
           return;
         }

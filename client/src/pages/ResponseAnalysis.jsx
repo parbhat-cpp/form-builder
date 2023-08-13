@@ -80,7 +80,7 @@ function ResponseAnalysis() {
 
     useEffect(() => {
         try {
-            fetch(`http://localhost:5000/response/${localStorage.currentResId}`)
+            fetch(`https://ps-forms.onrender.com/response/${localStorage.currentResId}`)
                 .then(res => res.json())
                 .then(data => {
                     if (data === null) {
