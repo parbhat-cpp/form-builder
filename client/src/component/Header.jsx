@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { AppBar, Toolbar, Typography } from '@mui/material';
-import ArticleIcon from '@mui/icons-material/Article';
+import ConstructionIcon from '@mui/icons-material/Construction';
 
 const StyledAppBar = styled(AppBar)({
     background: '#f4f4f4',
@@ -11,9 +11,9 @@ function Header() {
   return (
       <StyledAppBar>
           <Toolbar>
-              <ArticleIcon color='primary' style={{ marginRight: 10 }} fontSize='large' />
+              <ConstructionIcon color='primary' style={{ marginRight: 10 }} fontSize='large' />
               <Typography color={'black'}>
-                  Forms
+                  Form Builder
               </Typography>
           </Toolbar>
       </StyledAppBar>

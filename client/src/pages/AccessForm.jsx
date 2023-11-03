@@ -1,136 +1,169 @@
-import { useContext, useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react";
 import { DataContext } from "../Context/DataProvider";
-import { Box, TextField, Typography, FormControl, FormControlLabel, RadioGroup, Radio, Button, Dialog, IconButton } from "@mui/material";
-import CloseIcon from '@mui/icons-material/Close'
+import {
+  Box,
+  TextField,
+  Typography,
+  FormControl,
+  FormControlLabel,
+  RadioGroup,
+  Radio,
+  Button,
+  Dialog,
+  IconButton,
+  CircularProgress,
+} from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 import styled from "@emotion/styled";
-import { v4 as uuid } from 'uuid';
+import { v4 as uuid } from "uuid";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import Header from '../component/Header';
+import { useNavigate, useParams } from "react-router-dom";
+import Header from "../component/Header";
+import { SERVER_URL } from "../constants";
 
 const CustomButton = styled(Button)({
-  textTransform: 'none',
-  background: 'blue',
-  color: '#fff',
-  margin: '5px 10px',
-})
+  textTransform: "none",
+  background: "blue",
+  color: "#fff",
+  margin: "5px 10px",
+});
 
 const DialogStyle = {
-  height: '25%',
+  height: "25%",
   width: {
-    lg: '35%',
-    md: '38%',
-    sm: '80%',
-    xs: '80%'
+    lg: "35%",
+    md: "38%",
+    sm: "80%",
+    xs: "80%",
   },
-  maxWidth: '100%',
-  maxHeight: '100%',
-  boxShadow: 'none',
-  borderRadius: '10px'
-}
+  maxWidth: "100%",
+  maxHeight: "100%",
+  boxShadow: "none",
+  borderRadius: "10px",
+};
 
 const Wrapper = styled(Box)({
   padding: 10,
   margin: 10,
-  display: 'flex',
-  justifyContent: 'center'
-})
+  display: "flex",
+  justifyContent: "center",
+});
 
 function AccessForm() {
-
   const navigate = useNavigate();
+
+  const { Id } = useParams();
 
   const [UID, setUID] = useContext(DataContext);
   const [open, setOpen] = useState(false);
-  const [ID, setID] = useState('');
+  const [ID, setID] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const [responseJson, setResponseJson] = useState({
     Id: localStorage.currentId,
-    Answers: []
-  })
+    Answers: [],
+  });
 
   const [dataList, setDataList] = useState({
-    "Id": '',
-    "QuestionList": [],
-    "FormInfo": {
-      "FormInfo": '',
-      "FormDescription": ''
-    }
+    Id: "",
+    QuestionList: [],
+    FormInfo: {
+      FormInfo: "",
+      FormDescription: "",
+    },
   });
 
   const onSubmitFormClicked = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
     const uid = uuid();
     const uid_reduced = uid.slice(0, 8);
     setID(uid_reduced);
-    await axios.post(`https://ps-forms.onrender.com/save-response`, JSON.stringify({ Id: responseJson.Id, ResponseId: uid_reduced, Answers: responseJson.Answers }), { headers: { 'Content-Type': 'application/json' } });
+    await axios.post(
+      `${SERVER_URL}/save-response`,
+      JSON.stringify({
+        Id: responseJson.Id,
+        ResponseId: uid_reduced,
+        Answers: responseJson.Answers,
+      }),
+      { headers: { "Content-Type": "application/json" } }
+    );
+    await axios.post(
+      `${SERVER_URL}/push-response`,
+      JSON.stringify({
+        id: responseJson.Id,
+        resId: uid_reduced,
+      }),
+      { headers: { "Content-Type": "application/json" } }
+    );
+    setIsLoading(false);
     setOpen(true);
-  }
+  };
 
   useEffect(() => {
     try {
-      fetch(`https://ps-forms.onrender.com/access-form/${localStorage.currentId}`).then(res => res.json()).then(data => {
-        if (data === null) {
-          return;
-        }
-        setDataList(data);
-        for (let i in data) {
-          if (i === "QuestionList") {
-            responseJson.Answers = data.QuestionList;
+      fetch(`${SERVER_URL}/access-form/${Id}`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (data === null) {
+            return;
           }
-        }
-      }).catch(err => console.log(err))
+          console.log(data);
+          setDataList(data);
+          for (let i in data) {
+            if (i === "QuestionList") {
+              responseJson.Answers = data.QuestionList;
+            }
+          }
+        })
+        .catch((err) => console.log(err));
     } catch (error) {
       console.log(error);
     }
-  }, [])
+  }, []);
 
   const onValueChange = (e, qNo) => {
     e.preventDefault();
     for (let key in responseJson) {
       if (key === "Answers") {
-        responseJson.Answers.map(obj => {
+        responseJson.Answers.map((obj) => {
           if (obj.questionNumber === qNo) {
             obj.responseAnswer = e.target.value;
           }
-        })
+        });
       }
     }
-    console.log(responseJson);
-  }
+  };
 
   const onOptionSelected = (qNo, a, b, c, d) => {
     let resOption = {
       a: a,
       b: b,
       c: c,
-      d: d
+      d: d,
     };
     for (let key in responseJson) {
       if (key === "Answers") {
-        responseJson.Answers.map(obj => {
+        responseJson.Answers.map((obj) => {
           if (obj.questionNumber === qNo) {
             obj.responseOption = resOption;
           }
-        })
+        });
       }
     }
-    console.log(responseJson);
-  }
+  };
 
   const redirectToHome = () => {
-    navigate('/');
+    navigate("/");
     setOpen(false);
-  }
+  };
 
   return (
     <Wrapper>
       <Header />
       <form style={{ marginTop: 64 }}>
-        <Typography variant="h4">
-          Form ID: {dataList.Id}
-        </Typography>
-        <Box style={{ margin: '10px 0' }}>
+        <Typography variant="h4">Form ID: {dataList.Id}</Typography>
+        <Box style={{ margin: "10px 0" }}>
           <Typography variant="h5">
             Form Title: {dataList.FormInfo.FormTitle}
           </Typography>
@@ -139,15 +172,13 @@ function AccessForm() {
           </Typography>
         </Box>
         <Box>
-          {
-            dataList && dataList.QuestionList.map(question => (
-              (question.type === 'mcq') ? (
-                <Box key={question.id} style={{ margin: '10px 0' }}>
+          {dataList &&
+            dataList.QuestionList.map((question) =>
+              question.type === "mcq" ? (
+                <Box key={question.id} style={{ margin: "10px 0" }}>
                   <Typography variant="h5">
                     Q{question.questionNumber}.
-                    <Typography variant="span">
-                      {question.question}
-                    </Typography>
+                    <Typography variant="span">{question.question}</Typography>
                   </Typography>
                   <FormControl>
                     <RadioGroup
@@ -155,46 +186,130 @@ function AccessForm() {
                       defaultValue="mcq"
                       name="radio-buttons-group"
                     >
-                      <FormControlLabel value="first" onClick={() => onOptionSelected(question.questionNumber, true, false, false, false)} control={<Radio />} label={question.optionList.a.title} />
-                      <FormControlLabel value="second" onClick={() => onOptionSelected(question.questionNumber, false, true, false, false)} control={<Radio />} label={question.optionList.b.title} />
-                      <FormControlLabel value="third" onClick={() => onOptionSelected(question.questionNumber, false, false, true, false)} control={<Radio />} label={question.optionList.c.title} />
-                      <FormControlLabel value="fourth" onClick={() => onOptionSelected(question.questionNumber, false, false, false, true)} control={<Radio />} label={question.optionList.d.title} />
+                      <FormControlLabel
+                        value="first"
+                        onClick={() =>
+                          onOptionSelected(
+                            question.questionNumber,
+                            true,
+                            false,
+                            false,
+                            false
+                          )
+                        }
+                        control={<Radio />}
+                        label={question.optionList.a.title}
+                      />
+                      <FormControlLabel
+                        value="second"
+                        onClick={() =>
+                          onOptionSelected(
+                            question.questionNumber,
+                            false,
+                            true,
+                            false,
+                            false
+                          )
+                        }
+                        control={<Radio />}
+                        label={question.optionList.b.title}
+                      />
+                      <FormControlLabel
+                        value="third"
+                        onClick={() =>
+                          onOptionSelected(
+                            question.questionNumber,
+                            false,
+                            false,
+                            true,
+                            false
+                          )
+                        }
+                        control={<Radio />}
+                        label={question.optionList.c.title}
+                      />
+                      <FormControlLabel
+                        value="fourth"
+                        onClick={() =>
+                          onOptionSelected(
+                            question.questionNumber,
+                            false,
+                            false,
+                            false,
+                            true
+                          )
+                        }
+                        control={<Radio />}
+                        label={question.optionList.d.title}
+                      />
                     </RadioGroup>
                   </FormControl>
                 </Box>
               ) : (
-                <Box key={question.id} style={{ margin: '10px 0' }}>
+                <Box key={question.id} style={{ margin: "10px 0" }}>
                   <Typography variant="h5" key={question.id}>
                     Q{question.questionNumber}.
-                    <Typography variant="span">
-                      {question.question}
-                    </Typography>
+                    <Typography variant="span">{question.question}</Typography>
                   </Typography>
-                  <TextField id="outlined-basic" label="Enter your answer" style={{margin: '8px 0', width:'100%'}} variant="outlined" onChange={(e) => { onValueChange(e, question.questionNumber) }} />
+                  <TextField
+                    id="outlined-basic"
+                    label="Enter your answer"
+                    style={{ margin: "8px 0", width: "100%" }}
+                    variant="outlined"
+                    onChange={(e) => {
+                      onValueChange(e, question.questionNumber);
+                    }}
+                  />
                 </Box>
               )
-            ))
-          }
+            )}
         </Box>
-        <CustomButton type="submit" style={{ width: '100%' }} onClick={(e) => onSubmitFormClicked(e)}>
+        <CustomButton
+          type="submit"
+          style={{ width: "100%" }}
+          onClick={(e) => onSubmitFormClicked(e)}
+        >
           Submit Form
         </CustomButton>
-        <Dialog open={open} onClose={() => setOpen(false)} PaperProps={{
-          sx: { ...DialogStyle, height: 'auto' }
-        }}>
-          <Box style={{ background: '#f4f4f4' }}>
-            <IconButton style={{ display: 'flex', float: 'right' }}>
+        <Dialog
+          open={open}
+          onClose={() => setOpen(false)}
+          PaperProps={{
+            sx: { ...DialogStyle, height: "auto" },
+          }}
+        >
+          <Box style={{ background: "#f4f4f4" }}>
+            <IconButton style={{ display: "flex", float: "right" }}>
               <CloseIcon onClick={() => setOpen(false)} />
             </IconButton>
           </Box>
-          <TextField id="outlined-basic" value={ID} label="Form Response ID" variant="outlined" style={{ margin: 10 }} />
-          <CustomButton onClick={() => redirectToHome()} style={{ marginBottom: 15 }}>
+          <TextField
+            id="outlined-basic"
+            value={ID}
+            label="Form Response ID"
+            variant="outlined"
+            style={{ margin: 10 }}
+          />
+          <CustomButton
+            onClick={() => redirectToHome()}
+            style={{ marginBottom: 15 }}
+          >
             Redirect To Home Page
           </CustomButton>
         </Dialog>
       </form>
+      <Dialog
+        open={isLoading}
+        PaperProps={{
+          sx: {
+            padding: "20px 40px",
+          },
+        }}
+      >
+        <CircularProgress color="primary" />
+      </Dialog>
     </Wrapper>
-  )
+  );
 }
 
-export default AccessForm
+export default AccessForm;
